@@ -59,7 +59,10 @@ async def register_action(
     existing = await get_user_by_username(db, username)
     if existing:
         return templates.TemplateResponse("register.html", {"request": request, "error": "Такой логин уже занят"}, status_code=400)
-    user = await create_user(db, username, password)
+    try:
+        user = await create_user(db, username, password)
+    except ValueError:
+        return templates.TemplateResponse("register.html", {"request": request, "error": "Такой логин уже занят"}, status_code=400)
     token = create_access_token(subject=user.username)
     resp = _redirect("/search")
     resp.set_cookie("access_token", token, httponly=True, samesite="lax")

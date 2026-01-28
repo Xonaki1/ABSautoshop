@@ -14,7 +14,10 @@ async def register(payload: RegisterRequest, response: Response, db: AsyncSessio
     existing = await get_user_by_username(db, payload.username)
     if existing:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Username already exists")
-    user = await create_user(db, payload.username, payload.password)
+    try:
+        user = await create_user(db, payload.username, payload.password)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e)) from e
     token = create_access_token(subject=user.username)
     response.set_cookie("access_token", token, httponly=True, samesite="lax")
     return TokenResponse(access_token=token)
