@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: autoshop
+      POSTGRES_USER: autoshop
+      POSTGRES_PASSWORD: autoshop
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  web:
+    build: .
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://autoshop:autoshop@db:5432/autoshop}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-prod}
+      JWT_ISSUER: ${JWT_ISSUER:-autoshop}
+      JWT_AUDIENCE: ${JWT_AUDIENCE:-autoshop-clients}
+      JWT_EXPIRES_MINUTES: ${JWT_EXPIRES_MINUTES:-60}
+
+      SUPPLIER_API_BASE_URL: ${SUPPLIER_API_BASE_URL:-https://abstd.ru}
+      SUPPLIER_AUTH: ${SUPPLIER_AUTH:-}
+      SUPPLIER_LOGIN: ${SUPPLIER_LOGIN:-}
+      SUPPLIER_PASSWORD: ${SUPPLIER_PASSWORD:-}
+      SUPPLIER_AGREEMENT_ID: ${SUPPLIER_AGREEMENT_ID:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% set title = "Вход" %}
+
+{% block content %}
+  <div class="card">
+    <h1>Вход</h1>
+    <p class="muted">Авторизуйтесь, чтобы искать цены и наличие по номеру.</p>
+
+    {% if error %}
+      <div class="alert">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="/login" class="form">
+      <label class="label">
+        <span>Логин</span>
+        <input class="input" name="username" autocomplete="username" required />
+      </label>
+      <label class="label">
+        <span>Пароль</span>
+        <input class="input" type="password" name="password" autocomplete="current-password" required />
+      </label>
+      <button class="btn" type="submit">Войти</button>
+    </form>
+
+    <p class="muted small">
+      Нет аккаунта? <a href="/register">Зарегистрироваться</a>
+    </p>
+  </div>
+{% endblock %}
+

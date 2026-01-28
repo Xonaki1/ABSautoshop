@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% set title = "Поиск запчастей" %}
+
+{% block content %}
+  <div class="grid">
+    <div class="card">
+      <h1>Поиск по номеру</h1>
+      <p class="muted">Введите каталожный номер (OEM/аналог) — покажем цены и наличие.</p>
+
+      <form method="post" action="/search" class="form form--row">
+        <input class="input" name="number" placeholder="Например: 06A115561B" value="{{ number }}" required />
+        <button class="btn" type="submit">Найти</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Результаты</h2>
+
+      {% if error %}
+        <div class="alert">{{ error }}</div>
+      {% endif %}
+
+      {% if offers is none %}
+        <p class="muted">Сделайте поиск, чтобы увидеть предложения.</p>
+      {% elif offers|length == 0 %}
+        <p class="muted">Ничего не найдено по номеру <strong>{{ number }}</strong>.</p>
+      {% else %}
+        <div class="table">
+          <div class="row row--head">
+            <div>Поставщик</div>
+            <div>Номер</div>
+            <div>Название</div>
+            <div class="right">Цена</div>
+            <div class="right">Кол-во</div>
+            <div class="right">Срок</div>
+          </div>
+          {% for o in offers %}
+            <div class="row">
+              <div><span class="pill">{{ o.supplier }}</span></div>
+              <div class="mono">{{ o.number }}</div>
+              <div>{{ o.name }}</div>
+              <div class="right"><strong>{{ "%.2f"|format(o.price) }}</strong> <span class="muted">{{ o.currency }}</span></div>
+              <div class="right">{{ o.qty }}</div>
+              <div class="right">{{ o.delivery_days if o.delivery_days is not none else "-" }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
