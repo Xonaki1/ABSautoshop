@@ -18,20 +18,22 @@ async def create_user(db: AsyncSession, username: str, password: str) -> User:
         await db.commit()
     except IntegrityError:
         await db.rollback()
-
         existing = await get_user_by_username(db, username)
         if existing:
             raise ValueError("Username already exists")
-        raise
+        raise ValueError(
+            "Database error while creating user"
+        )
     await db.refresh(user)
     return user
 
 
-async def authenticate_user(db: AsyncSession, username: str, password: str) -> User | None:
+async def authenticate_user(
+    db: AsyncSession, username: str, password: str
+) -> User | None:
     user = await get_user_by_username(db, username)
     if not user:
         return None
     if not verify_password(password, user.password_hash):
         return None
     return user
-
