@@ -33,6 +33,7 @@
             <div class="right">Цена</div>
             <div class="right">Кол-во</div>
             <div class="right">Срок</div>
+            <div class="right">Корзина</div>
           </div>
           {% for o in offers %}
             <div class="row">
@@ -42,6 +43,18 @@
               <div class="right"><strong>{{ "%.2f"|format(o.price) }}</strong> <span class="muted">{{ o.currency }}</span></div>
               <div class="right">{{ o.qty }}</div>
               <div class="right">{{ o.delivery_days if o.delivery_days is not none else "-" }}</div>
+              <div class="right">
+                <form method="post" action="/cart/add">
+                  <input type="hidden" name="supplier" value="{{ o.supplier }}" />
+                  <input type="hidden" name="number" value="{{ o.number }}" />
+                  <input type="hidden" name="name" value="{{ o.name }}" />
+                  <input type="hidden" name="price" value="{{ o.price }}" />
+                  <input type="hidden" name="currency" value="{{ o.currency }}" />
+                  <input type="hidden" name="delivery_days" value="{{ o.delivery_days if o.delivery_days is not none else '' }}" />
+                  <input type="hidden" name="quantity" value="1" />
+                  <button class="btn btn--ghost" type="submit">В корзину</button>
+                </form>
+              </div>
             </div>
           {% endfor %}
         </div>

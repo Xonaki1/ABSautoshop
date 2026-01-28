@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% set title = "Корзина" %}
+
+{% block content %}
+  <div class="card">
+    <div class="cart-head">
+      <h1>Корзина</h1>
+      <div class="spacer"></div>
+      {% if items|length > 0 %}
+        <form method="post" action="/cart/clear">
+          <button class="btn btn--ghost" type="submit">Очистить</button>
+        </form>
+      {% endif %}
+    </div>
+
+    {% if items|length == 0 %}
+      <p class="muted">Корзина пустая. Перейдите в <a href="/search">поиск</a> и добавьте позиции.</p>
+    {% else %}
+      <div class="table">
+        <div class="row row--head">
+          <div>Поставщик</div>
+          <div>Номер</div>
+          <div>Название</div>
+          <div class="right">Цена</div>
+          <div class="right">Кол-во</div>
+          <div class="right">Сумма</div>
+          <div class="right">Действие</div>
+        </div>
+        {% for it in items %}
+          <div class="row">
+            <div><span class="pill">{{ it.supplier }}</span></div>
+            <div class="mono">{{ it.number }}</div>
+            <div>{{ it.name }}</div>
+            <div class="right"><strong>{{ "%.2f"|format(it.price) }}</strong> <span class="muted">{{ it.currency }}</span></div>
+            <div class="right">{{ it.quantity }}</div>
+            <div class="right"><strong>{{ "%.2f"|format(it.price * it.quantity) }}</strong> <span class="muted">{{ it.currency }}</span></div>
+            <div class="right">
+              <form method="post" action="/cart/remove/{{ it.id }}">
+                <button class="btn btn--ghost" type="submit">Удалить</button>
+              </form>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="cart-total">
+        <div class="muted">Итого:</div>
+        <div class="spacer"></div>
+        <div class="total"><strong>{{ "%.2f"|format(total) }}</strong> <span class="muted">{{ currency }}</span></div>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
