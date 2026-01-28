@@ -55,7 +55,8 @@ main.container { padding: 28px 0 60px; }
 
 .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
 @media (min-width: 900px) {
-  .grid { grid-template-columns: 0.9fr 1.1fr; }
+  /* Make the left "Поиск по номеру" column ~1.5x wider than before */
+  .grid { grid-template-columns: 1.35fr 1.1fr; }
 }
 
 .card {
