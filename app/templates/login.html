@@ -11,6 +11,7 @@
     {% endif %}
 
     <form method="post" action="/login" class="form">
+      <input type="hidden" name="next" value="{{ next or '' }}" />
       <label class="label">
         <span>Логин</span>
         <input class="input" name="username" autocomplete="username" required />

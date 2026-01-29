@@ -25,10 +25,10 @@ async def index(request: Request):
 
 
 @router.get("/login", response_class=HTMLResponse)
-async def login_page(request: Request):
+async def login_page(request: Request, next: str | None = None):
     return templates.TemplateResponse(
         "login.html",
-        {"request": request, "error": None},
+        {"request": request, "error": None, "next": next or ""},
     )
 
 
@@ -37,6 +37,7 @@ async def login_action(
     request: Request,
     username: str = Form(...),
     password: str = Form(...),
+    next: str = Form(""),
     db: AsyncSession = Depends(get_db),
 ):
     user = await authenticate_user(db, username, password)
@@ -47,16 +48,16 @@ async def login_action(
             status_code=400,
         )
     token = create_access_token(subject=user.username)
-    resp = _redirect("/search")
+    resp = _redirect(next or "/search")
     resp.set_cookie("access_token", token, httponly=True, samesite="lax")
     return resp
 
 
 @router.get("/register", response_class=HTMLResponse)
-async def register_page(request: Request):
+async def register_page(request: Request, next: str | None = None):
     return templates.TemplateResponse(
         "register.html",
-        {"request": request, "error": None},
+        {"request": request, "error": None, "next": next or ""},
     )
 
 
@@ -65,6 +66,7 @@ async def register_action(
     request: Request,
     username: str = Form(...),
     password: str = Form(...),
+    next: str = Form(""),
     db: AsyncSession = Depends(get_db),
 ):
     existing = await get_user_by_username(db, username)
@@ -87,7 +89,7 @@ async def register_action(
             status_code=400,
         )
     token = create_access_token(subject=user.username)
-    resp = _redirect("/search")
+    resp = _redirect(next or "/search")
     resp.set_cookie("access_token", token, httponly=True, samesite="lax")
     return resp
 
